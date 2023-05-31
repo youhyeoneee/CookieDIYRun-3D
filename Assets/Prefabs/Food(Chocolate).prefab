@@ -112,7 +112,8 @@ MonoBehaviour:
   _isRotate: 1
   _rotateSpeed: 50
   _mr: {fileID: 1862063741993636498}
-  _food: 1
+  _item: 0
+  _amount: 5
 --- !u!1 &3938633439633277644
 GameObject:
   m_ObjectHideFlags: 0

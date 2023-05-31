@@ -21,7 +21,6 @@ public class CameraController : MonoBehaviour
     private Vector3 offsetPos;
     private Quaternion offsetRot;
     GameState gameState;
-
     void Start()
     {
         offsetPos = transform.position - target.transform.position;

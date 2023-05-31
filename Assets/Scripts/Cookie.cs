@@ -25,9 +25,9 @@ public class Cookie : MonoBehaviour
     public Animator anim;
 
     [Header("Size")]
-    private float originalScale;
     private float maxScale = 30f;
     private float minScale = 10f;
+    [SerializeField] private float _growthDuration = 0.1f; // 
 
     [Header("Baking")]
     [SerializeField] private Transform bakingPos;
@@ -38,9 +38,7 @@ public class Cookie : MonoBehaviour
         targetRotation = transform.rotation.eulerAngles;
         minRotation = targetRotation.y - rotationRange;
         maxRotation = targetRotation.y + rotationRange;
-
-        originalScale = transform.localScale.x; // 캐릭터의 초기 스케일을 저장합니다.
-
+        
         anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
     }
@@ -75,27 +73,32 @@ public class Cookie : MonoBehaviour
                 {
                     anim.SetBool(AnimType.run.ToString(), false);
                 }
+
+                if (transform.localScale.x == 0)
+                    GameManager.Instance.GameOver();
                 break;
             case GameState.GoToOven:
-
-                Debug.Log(_agent.currentOffMeshLinkData.linkType);
+                if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+                {
+                    anim.SetBool(AnimType.run.ToString(), true);
+                }
                 _agent.SetDestination(bakingPos.position);
-                anim.SetBool(AnimType.run.ToString(), true);
                 break;
         }
     }
-
-    public void IncreaseSize()
+    
+    public IEnumerator ChangeSize(float amount)
     {
-        float newSize = transform.localScale.x * 2f; // 현재 스케일의 2배로 크기를 증가시킵니다.
-        newSize = Mathf.Clamp(newSize, originalScale, maxScale); // 크기를 최소 스케일과 최대 스케일 사이로 제한합니다.
-        transform.localScale = new Vector3(newSize, newSize, newSize); // 스케일을 증가시킨 값으로 설정합니다.
-    }
+        float elapsedTime = 0f;
+        Vector3 startScale = transform.localScale;        
+        float newSize = transform.localScale.x + amount;
+        Vector3 targetScale = new Vector3(newSize, newSize, newSize); 
 
-    public void DecreaseSize()
-    {
-        float newSize = transform.localScale.x * 0.5f; // 현재 스케일의 절반으로 크기를 감소시킵니다.
-        newSize = Mathf.Clamp(newSize, minScale, originalScale); // 크기를 최소 스케일과 초기 스케일 사이로 제한합니다.
-        transform.localScale = new Vector3(newSize, newSize, newSize); // 스케일을 감소시킨 값으로 설정합니다.
+        while (elapsedTime < _growthDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(startScale, targetScale, elapsedTime / _growthDuration);
+            yield return null;
+        }
     }
 }

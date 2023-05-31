@@ -38,9 +38,9 @@ public abstract class Gimmick : MonoBehaviour
     }
     protected abstract void ActivateGimmick(GameObject hitObject);
 
-    FoodType StringToEnum(string alphabet)
+    ItemType StringToEnum(string alphabet)
     {
-        return (FoodType)Enum.Parse(typeof(FoodType), alphabet);
+        return (ItemType)Enum.Parse(typeof(ItemType), alphabet);
     }
     
 }

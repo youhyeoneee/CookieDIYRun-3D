@@ -10,10 +10,12 @@ public class OffMeshLinkJump : MonoBehaviour
     [SerializeField] private float gravity = -9.8f;
 
     private NavMeshAgent _agent;
+    private Animator _anim;
 
     private void Awake() 
     {
         _agent = GetComponent<NavMeshAgent>();
+        _anim = GetComponent<Animator>();
     }
     IEnumerator Start()
     {
@@ -36,12 +38,14 @@ public class OffMeshLinkJump : MonoBehaviour
                 return true;
             }
         }
+        
         return false;
     }
 
     IEnumerator JumpTo()
     {
         _agent.isStopped = true;
+        _anim.SetBool(AnimType.jump.ToString(), true);
 
         OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
         Vector3 start = transform.position;
@@ -68,6 +72,8 @@ public class OffMeshLinkJump : MonoBehaviour
             yield return null;
         }
         _agent.CompleteOffMeshLink();
+        
+        _anim.SetBool(AnimType.jump.ToString(), false);
         _agent.isStopped = false;
     }
 }

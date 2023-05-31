@@ -20,8 +20,6 @@ public class Item : Gimmick
     protected override void Start()
     {
         base.Start();
-        _originalScale = _cookie.transform.localScale;
-        _targetScale = _originalScale * 2f;
         _rb = _cookie.GetComponent<Rigidbody>();
     }
 
@@ -41,35 +39,11 @@ public class Item : Gimmick
 
         // 앞으로 빨리 가게
         // _rb.AddForce(transform.forward * -10f, ForceMode.Impulse);
-
+        _originalScale = _cookie.transform.localScale;
+        _targetScale = _originalScale * 2f;
         // 커져라
-        StartCoroutine(ChangeSize());
+        // StartCoroutine(ChangeSize());
     }
 
-    IEnumerator ChangeSize()
-    {
-        float elapsedTime = 0f;
-        Vector3 startScale = _cookie.transform.localScale;
-        Vector3 targetScale = this._targetScale;
-
-        while (elapsedTime < _growthDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            _cookie.transform.localScale = Vector3.Lerp(startScale, targetScale, elapsedTime / _growthDuration);
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(_returnDuration);
-
-        elapsedTime = 0f;
-        startScale = _cookie.transform.localScale;
-        targetScale = _originalScale;
-
-        while (elapsedTime < _growthDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            _cookie.transform.localScale = Vector3.Lerp(startScale, targetScale, elapsedTime / _growthDuration);
-            yield return null;
-        }
-    }
+   
 }

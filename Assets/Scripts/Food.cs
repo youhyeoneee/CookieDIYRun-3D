@@ -7,8 +7,14 @@ public class Food : Gimmick
     
 
     [SerializeField] private MeshRenderer _mr;
+    [SerializeField] private int _amount;
 
-    [SerializeField] private FoodType _food;
+    protected override void Start()
+    {
+        base.Start();
+        if (_mr == null)
+            _mr = GetComponent<MeshRenderer>();
+    }
 
     protected override void Rotate()
     {
@@ -22,18 +28,7 @@ public class Food : Gimmick
         // _effectObj.SetActive(true);
         _mr.enabled = false;
         
-        GameManager.Instance.ChangeCount(_food, 1);
-
-        switch (_food)
-        {               
-
-            case FoodType.Chocolate:
-                hitObject.GetComponent<Cookie>().IncreaseSize();
-                break;
-            case FoodType.Papryka:
-                hitObject.GetComponent<Cookie>().DecreaseSize();
-                break;
-
-        }
+        GameManager.Instance.ChangeTasty(_amount);
+        StartCoroutine(hitObject.GetComponent<Cookie>().ChangeSize(_amount));
     }
 }

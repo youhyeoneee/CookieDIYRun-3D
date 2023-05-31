@@ -14,13 +14,8 @@ public class UIManager : MonoBehaviour
     
     [Header("Text")]
     [SerializeField] private Text coinText;
-    [SerializeField] private Text chochText;
-    [SerializeField] private Text papryText;
-
-    [Header("Image")]
-    [SerializeField] private GameObject chochImg;
-    [SerializeField] private GameObject papryImg;
-
+    [SerializeField] private Text tastyText;
+    
     GameState gameState;
     // Start is called before the first frame update
     void Start()
@@ -45,30 +40,9 @@ public class UIManager : MonoBehaviour
                     gameUI.SetActive(true);
 
                 // 재료 개수 UI
-                chochText.text = GameManager.Instance.chocoFoodCounts.cnt.ToString();
-                papryText.text = GameManager.Instance.papryFoodCounts.cnt.ToString();
-                
-                // 더 많은 재료 말풍선 UI
-                FoodType nowFood = GameManager.Instance.CompareCount();
-                switch (nowFood)
-                {
-                    case FoodType.Chocolate:
-                        chochImg.SetActive(true);
-                        papryImg.SetActive(false);
-                        break;
-                    case FoodType.Papryka:
-                        chochImg.SetActive(false);
-                        papryImg.SetActive(true);
-                        break;
-                    case FoodType.None:
-                        chochImg.SetActive(false);
-                        papryImg.SetActive(false);
-                        break;
+                tastyText.text = GameManager.Instance.tasty.ToString();
 
-                }                
                 break;
-
-
         }
       
 

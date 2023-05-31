@@ -10,10 +10,7 @@ public enum TagType
 public enum AnimType
 {
     run, 
-    offset,
-    ready,
-    dance,
-    destroy
+    jump,
 }
 
 public enum GameState
@@ -22,12 +19,12 @@ public enum GameState
     Run,
     GoToOven,
     StartBaking,
+    Fail,
     Ended
 }
 
-public enum FoodType
+public enum ItemType
 {
-    None,
-    Chocolate,
-    Papryka
+    Plus,
+    Minus
 }

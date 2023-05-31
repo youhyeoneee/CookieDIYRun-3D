@@ -32,9 +32,8 @@ public class Obstacle : Gimmick
         {
             Debug.Log("OnDamage");
              // 재료 개수 감소
-            GameManager.Instance.ChangeCount(FoodType.Chocolate, -5);
-            GameManager.Instance.ChangeCount(FoodType.Papryka, -5);
-
+            GameManager.Instance.ChangeTasty(-5);
+            StartCoroutine(hitObject.GetComponent<Cookie>().ChangeSize(-5));
             // 피격 효과
             StartCoroutine(FlashLight());
         }

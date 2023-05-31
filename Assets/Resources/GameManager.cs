@@ -4,26 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class FoodCounts
-{
-    public FoodType food;
-    public int cnt;
-    public FoodCounts(FoodType _food, int _cnt)
-    {
-        food = _food;
-        cnt = _cnt;
-    }
-
-}
-
 public class GameManager : MonoBehaviour
 {
 
-    public GameState gameState = GameState.NotStart;    
-    public FoodCounts chocoFoodCounts;
-    public FoodCounts papryFoodCounts;
-
-    public FoodType nowFood;
+    public GameState gameState = GameState.NotStart;
+    public int tasty;
 
     #region instance
 
@@ -53,12 +38,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
     }
-
-    private void Start() 
-    {
-       
-    }
-
+    
     void Update()
     {
         switch(gameState)
@@ -72,47 +52,20 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void ChangeCount(FoodType food, int changeCount)
+    public void ChangeTasty(int changeCount)
     {
-        switch(food)
-        {
-            case FoodType.Chocolate:
-                chocoFoodCounts.cnt += changeCount;
-                if (chocoFoodCounts.cnt < 0) chocoFoodCounts.cnt = 0;
-                
-                break;
-            case FoodType.Papryka:
-                papryFoodCounts.cnt += changeCount;
-                if (papryFoodCounts.cnt < 0) papryFoodCounts.cnt = 0;
-                break;
-        }
-
-
-    }
-
-    public FoodType CompareCount()
-    {
-        if (chocoFoodCounts.cnt > 0 || papryFoodCounts.cnt > 0)
-        {
-            if (chocoFoodCounts.cnt >= papryFoodCounts.cnt)
-                return chocoFoodCounts.food;
-            else   
-                return papryFoodCounts.food;
-        }
-
-        return FoodType.None;
+        tasty += changeCount;
     }
     
     public void StartGame()
     {
         // 재료 개수 초기화
-        chocoFoodCounts = new FoodCounts(FoodType.Chocolate, 0);
-        papryFoodCounts = new FoodCounts(FoodType.Papryka, 0);
+        tasty = 0;
 
         // 게임 상태 변경 
         gameState = GameState.Run;
     }
-
+    
     public void GoToOven()
     {
         // 게임 상태 변경 
@@ -123,5 +76,11 @@ public class GameManager : MonoBehaviour
     {
         // 게임 상태 변경 
         gameState = GameState.StartBaking;
+    }
+    
+    public void GameOver()
+    {
+        // 게임 상태 변경 
+        gameState = GameState.Fail;
     }
 }
