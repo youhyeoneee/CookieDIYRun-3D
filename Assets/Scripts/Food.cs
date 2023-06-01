@@ -4,17 +4,7 @@ using UnityEngine;
 
 public class Food : Gimmick
 {
-    
-
-    [SerializeField] private MeshRenderer _mr;
-    [SerializeField] private int _amount;
-
-    protected override void Start()
-    {
-        base.Start();
-        if (_mr == null)
-            _mr = GetComponent<MeshRenderer>();
-    }
+    [SerializeField] private GameObject _effectObj;
 
     protected override void Rotate()
     {
@@ -25,7 +15,7 @@ public class Food : Gimmick
     protected override void ActivateGimmick(GameObject hitObject)
     {
         // _particleObj.SetActive(false);
-        // _effectObj.SetActive(true);
+        _effectObj.SetActive(true);
         _mr.enabled = false;
         
         GameManager.Instance.ChangeTasty(_amount);

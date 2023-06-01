@@ -9,7 +9,9 @@ public class OvenTrigger : MonoBehaviour
     {
         if (other.collider.gameObject.CompareTag(TagType.Player.ToString()))
         {
-            GameManager.Instance.StartBaking();
+            other.gameObject.GetComponent<Cookie>().anim.SetBool(AnimType.attack.ToString(), true);
+
+            // GameManager.Instance.StartBaking();
         }
     }
 }

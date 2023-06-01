@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
 
         switch(gameState)
         {
+            case GameState.GoToOven:
             case GameState.Run:
                 // 시작 UI 비활성화
                 if (startUI.activeSelf)
@@ -48,4 +49,9 @@ public class UIManager : MonoBehaviour
 
         
     }
+
+    // IEnumerator FadeOut()
+    // {
+    //     GetComponent
+    // }
 }

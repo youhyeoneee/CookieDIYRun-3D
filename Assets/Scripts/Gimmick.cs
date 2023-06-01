@@ -11,12 +11,15 @@ public abstract class Gimmick : MonoBehaviour
     [SerializeField] protected bool _isRotate;
     [SerializeField] protected float _rotateSpeed;
     protected Quaternion _startRotation;
+    [SerializeField] protected int _amount;
+    [SerializeField] protected MeshRenderer   _mr;
 
 
 
     protected virtual void Start()
     {
         _startRotation = transform.rotation;
+        _mr = GetComponent<MeshRenderer>();
     }
 
     protected virtual void Update()

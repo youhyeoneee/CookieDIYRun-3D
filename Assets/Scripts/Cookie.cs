@@ -29,6 +29,16 @@ public class Cookie : MonoBehaviour
     private float minScale = 10f;
     [SerializeField] private float _growthDuration = 0.1f; // 
 
+    [Header("Material")]
+    [SerializeField] private SkinnedMeshRenderer _cookieBody;
+    [SerializeField] private Material _redMat;
+    [SerializeField] private Material[] _mat;
+
+    [Header("Break")]
+    [SerializeField] private GameObject _breakCookie;
+    [SerializeField] private MeshRenderer _mr;
+
+
     [Header("Baking")]
     [SerializeField] private Transform bakingPos;
     private NavMeshAgent _agent;
@@ -41,50 +51,62 @@ public class Cookie : MonoBehaviour
         
         anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
+
+
+        _mat = _cookieBody.materials;
     }
     private void Update()
     {
         gameState = GameManager.Instance.gameState;
-        switch (gameState)
+
+
+        if (transform.localScale.x < 0 && gameState != GameState.Fail)
         {
-            case GameState.Run:
-                if (Input.GetMouseButton(0))
-                {
-                    anim.SetBool(AnimType.run.ToString(), true);
-
-                    // 앞으로 이동
-                    float moveZ = moveZSpeed * Time.fixedDeltaTime;
-                    transform.Translate(Vector3.forward * moveZ);
-
-                    // 마우스 드래그 입력 받기
-                    dragDirection = Input.GetAxis("Mouse X");
-
-                    // 좌우로 이동
-                    float moveX = dragDirection * moveXSpeed * Time.fixedDeltaTime;
-                    transform.Translate(Vector3.right * moveX);
-
-                    // 회전
-                    float rotateY = dragDirection * rotaionSpeed;
-                    targetRotation.y = Mathf.Clamp(targetRotation.y + rotateY, minRotation, maxRotation);
-                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSmoothness);
-
-                }
-                if (Input.GetMouseButtonUp(0))
-                {
-                    anim.SetBool(AnimType.run.ToString(), false);
-                }
-
-                if (transform.localScale.x == 0)
-                    GameManager.Instance.GameOver();
-                break;
-            case GameState.GoToOven:
-                if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Run"))
-                {
-                    anim.SetBool(AnimType.run.ToString(), true);
-                }
-                _agent.SetDestination(bakingPos.position);
-                break;
+            // 피격 효과
+            StartCoroutine(DestoyCookie());
+            GameManager.Instance.GameOver();
         }
+        else 
+        {
+            switch (gameState)
+            {
+                case GameState.Run:
+                    if (Input.GetMouseButton(0))
+                    {
+                        anim.SetBool(AnimType.run.ToString(), true);
+
+                        // 앞으로 이동
+                        float moveZ = moveZSpeed * Time.fixedDeltaTime;
+                        transform.Translate(Vector3.forward * moveZ);
+
+                        // 마우스 드래그 입력 받기
+                        dragDirection = Input.GetAxis("Mouse X");
+
+                        // 좌우로 이동
+                        float moveX = dragDirection * moveXSpeed * Time.fixedDeltaTime;
+                        transform.Translate(Vector3.right * moveX);
+
+                        // 회전
+                        float rotateY = dragDirection * rotaionSpeed;
+                        targetRotation.y = Mathf.Clamp(targetRotation.y + rotateY, minRotation, maxRotation);
+                        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSmoothness);
+
+                    }
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        anim.SetBool(AnimType.run.ToString(), false);
+                    }
+                    break;
+                case GameState.GoToOven:
+                    if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+                    {
+                        anim.SetBool(AnimType.run.ToString(), true);
+                    }
+                    _agent.SetDestination(bakingPos.position);
+                    break;
+            }
+        }
+       
     }
     
     public IEnumerator ChangeSize(float amount)
@@ -100,5 +122,28 @@ public class Cookie : MonoBehaviour
             transform.localScale = Vector3.Lerp(startScale, targetScale, elapsedTime / _growthDuration);
             yield return null;
         }
+    }
+
+    private IEnumerator DestoyCookie()
+    {           
+
+        GameObject breakCookie = GameObject.Instantiate(_breakCookie, transform);
+
+        yield return new WaitForSeconds(0.2f);
+
+    }
+
+    public IEnumerator RedCookie()
+    {
+
+        Material[] mats = _cookieBody.materials;
+        mats[2] = _redMat;
+        _cookieBody.materials = mats;
+
+        Debug.Log("RedCookie");
+        yield return new WaitForSeconds(0.2f);
+
+        _cookieBody.materials = _mat;
+        
     }
 }
