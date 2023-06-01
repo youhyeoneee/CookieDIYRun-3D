@@ -9,9 +9,8 @@ public class OvenTrigger : MonoBehaviour
     {
         if (other.collider.gameObject.CompareTag(TagType.Player.ToString()))
         {
+            // 오븐 있는 바닥에 닿았을 때 공격 모션
             other.gameObject.GetComponent<Cookie>().anim.SetBool(AnimType.attack.ToString(), true);
-
-            // GameManager.Instance.StartBaking();
         }
     }
 }

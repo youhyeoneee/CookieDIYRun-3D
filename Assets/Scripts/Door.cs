@@ -7,7 +7,7 @@ public class Door : MonoBehaviour
     [SerializeField] private GameObject _effectObj;
     [SerializeField] private GameObject player;
     [SerializeField] private Transform _targetRotation;
-
+    
     private Vector3 initialPosition;  // 초기 위치
     private Quaternion _startRotation;
     private bool isMovingDown = true; // 아래로 이동 중인지 여부
@@ -25,10 +25,7 @@ public class Door : MonoBehaviour
     {
         if (isDoorClosing)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, _targetRotation.rotation, _rotateSpeed * Time.deltaTime);
-
-            if (Quaternion.Angle(transform.rotation, _targetRotation.rotation) < 0.1f)
-                isDoorClosing = false;
+            StartCoroutine(CloseDoor());
         }    
     }
     
@@ -39,12 +36,13 @@ public class Door : MonoBehaviour
         Debug.Log("Door!!" + hitObject.name);
         Debug.Log(GameManager.Instance.gameState);
         Debug.Log(hitObject.tag);
-        if (GameManager.Instance.gameState == GameState.StartBaking && hitObject.CompareTag(TagType.Player.ToString()))
+        if (GameManager.Instance.gameState == GameState.Fail)
         {
 
 
             // StartCoroutine(OpenDoor());
             isDoorClosing = true;
+            StartCoroutine(DestroyDoor());
             // _effectObj.transform.parent = null;
             // _effectObj.SetActive(true);
             // _mr.enabled = false;
@@ -53,5 +51,21 @@ public class Door : MonoBehaviour
         }
     }
 
+    public IEnumerator CloseDoor()
+    {
+        yield return new WaitForSeconds(1f);
+        
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, _targetRotation.rotation, _rotateSpeed * Time.deltaTime);
+
+        if (Quaternion.Angle(transform.rotation, _targetRotation.rotation) < 0.1f)
+            isDoorClosing = false;
+    }
+
+    private IEnumerator DestroyDoor()
+    {
+        yield return StartCoroutine(CloseDoor());
+        yield return new WaitForSeconds(2f);
+        gameObject.SetActive(false);
+    }
     
 }

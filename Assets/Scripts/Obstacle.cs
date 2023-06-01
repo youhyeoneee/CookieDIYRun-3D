@@ -9,9 +9,9 @@ public class Obstacle : Gimmick
 
     [Header("Obstacle Break Effect")]
     [SerializeField] private GameObject     _particle; 
+    [SerializeField] private GameObject     _canvas; 
 
     public float forceMagnitude = 500f; // 날아가는 힘의 세기
-    private Rigidbody _rb;
 
     
 
@@ -19,12 +19,6 @@ public class Obstacle : Gimmick
     {
         Quaternion targetRotation = Quaternion.Euler(_startRotation.eulerAngles.x, _startRotation.eulerAngles.y, transform.rotation.eulerAngles.z + (_rotateSpeed * Time.deltaTime));
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotateSpeed * Time.deltaTime);
-        _rb = GetComponent<Rigidbody>();
-
-        if (_rb == null)
-        {
-            Debug.LogError($"Rigidbody 컴포넌트가 {gameObject.name} 장애물에 추가되어 있지 않습니다.");
-        }
     }
     
     protected override void ActivateGimmick(GameObject hitObject)
@@ -49,6 +43,11 @@ public class Obstacle : Gimmick
             {
                 Vector3 collisionDirection = (hitObject.transform.position - transform.position).normalized;
                 _rb.AddForce(collisionDirection * forceMagnitude, ForceMode.Impulse);
+            }
+
+            if (_canvas != null)
+            {
+                _canvas.SetActive(false);
             }
 
         // }

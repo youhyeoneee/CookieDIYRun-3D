@@ -36,13 +36,14 @@ public class Cookie : MonoBehaviour
 
     [Header("Break")]
     [SerializeField] private GameObject _breakCookie;
-    [SerializeField] private MeshRenderer _mr;
+    [SerializeField] private SkinnedMeshRenderer _mr;
 
 
     [Header("Baking")]
     [SerializeField] private Transform bakingPos;
     private NavMeshAgent _agent;
 
+    [Header("Baking")] private bool _isDance = false;
     private void Start()
     {
         targetRotation = transform.rotation.eulerAngles;
@@ -51,8 +52,6 @@ public class Cookie : MonoBehaviour
         
         anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
-
-
         _mat = _cookieBody.materials;
     }
     private void Update()
@@ -63,8 +62,8 @@ public class Cookie : MonoBehaviour
         if (transform.localScale.x < 0 && gameState != GameState.Fail)
         {
             // 피격 효과
-            StartCoroutine(DestoyCookie());
-            GameManager.Instance.GameOver();
+            StartCoroutine(BreakCookie());
+            GameManager.Instance.Fail();
         }
         else 
         {
@@ -104,6 +103,14 @@ public class Cookie : MonoBehaviour
                     }
                     _agent.SetDestination(bakingPos.position);
                     break;
+                case  GameState.StartBaking:
+                    if (anim.GetCurrentAnimatorStateInfo(0).IsName("Dance"))
+                    {
+                        StartCoroutine(RotateCharacter());
+                        GameManager.Instance.GameOver();
+                    }
+                    break;
+                    
             }
         }
        
@@ -124,13 +131,12 @@ public class Cookie : MonoBehaviour
         }
     }
 
-    private IEnumerator DestoyCookie()
-    {           
+    private IEnumerator BreakCookie()
+    {
 
-        GameObject breakCookie = GameObject.Instantiate(_breakCookie, transform);
-
+        _mr.enabled = false;
         yield return new WaitForSeconds(0.2f);
-
+        Instantiate(_breakCookie, transform.position + Vector3.up, Quaternion.identity);
     }
 
     public IEnumerator RedCookie()
@@ -145,5 +151,18 @@ public class Cookie : MonoBehaviour
 
         _cookieBody.materials = _mat;
         
+    }
+    
+    IEnumerator RotateCharacter()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        Quaternion targetRotation = Quaternion.Euler(0f, 180f, 0f);
+
+        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotaionSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
 }

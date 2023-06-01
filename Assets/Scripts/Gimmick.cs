@@ -13,6 +13,7 @@ public abstract class Gimmick : MonoBehaviour
     protected Quaternion _startRotation;
     [SerializeField] protected int _amount;
     [SerializeField] protected MeshRenderer   _mr;
+    protected Rigidbody _rb;
 
 
 
@@ -20,6 +21,11 @@ public abstract class Gimmick : MonoBehaviour
     {
         _startRotation = transform.rotation;
         _mr = GetComponent<MeshRenderer>();
+        _rb = GetComponent<Rigidbody>();
+        if (_rb == null)
+        {
+            Debug.LogError($"Rigidbody 컴포넌트가 {gameObject.name} 장애물에 추가되어 있지 않습니다.");
+        }
     }
 
     protected virtual void Update()

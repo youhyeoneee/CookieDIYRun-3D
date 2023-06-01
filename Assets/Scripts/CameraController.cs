@@ -47,9 +47,14 @@ public class CameraController : MonoBehaviour
                     StartCoroutine(MoveCamFollowPlayer(cameras[currentIndex]));
                     currentIndex++;
                 }
+                else if (gameState == GameState.Fail)
+                {
+                    StartCoroutine(MoveCamEnding(cameras[currentIndex+1]));
+                    currentIndex++;
+                }
                 break;
             case 2:
-                if (gameState == GameState.StartBaking)
+                if (gameState == GameState.StartBaking )
                 {
                     StartCoroutine(MoveCamEnding(cameras[currentIndex]));
                     currentIndex++;

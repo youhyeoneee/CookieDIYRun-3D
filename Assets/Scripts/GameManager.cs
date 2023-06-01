@@ -78,9 +78,15 @@ public class GameManager : MonoBehaviour
         gameState = GameState.StartBaking;
     }
     
-    public void GameOver()
+    public void Fail()
     {
         // 게임 상태 변경 
         gameState = GameState.Fail;
+    }
+    
+    public void GameOver()
+    {
+        // 게임 상태 변경 
+        gameState = GameState.GameOver;
     }
 }
