@@ -6,7 +6,6 @@ public class Item : Gimmick
 {
     [Header("Cookie")]
     [SerializeField] private GameObject _cookie;
-    private Rigidbody _rb;
 
     [Header("Item")]
     [SerializeField] private MeshRenderer[] _mrs;
@@ -20,7 +19,6 @@ public class Item : Gimmick
     protected override void Start()
     {
         base.Start();
-        _rb = _cookie.GetComponent<Rigidbody>();
     }
 
     protected override void Rotate()
@@ -37,12 +35,8 @@ public class Item : Gimmick
         for(int i=0; i<_mrs.Length; i++)
             _mrs[i].enabled = false;       
 
-        // 앞으로 빨리 가게
-        // _rb.AddForce(transform.forward * -10f, ForceMode.Impulse);
         _originalScale = _cookie.transform.localScale;
         _targetScale = _originalScale * 2f;
-        // 커져라
-        // StartCoroutine(ChangeSize());
     }
 
    

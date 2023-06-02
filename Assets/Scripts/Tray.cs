@@ -40,7 +40,7 @@ public class Tray : MonoBehaviour
         {
             Debug.Log(other.gameObject.name);
 
-            if (GameManager.Instance.tasty > 0)
+            if (GameManager.Instance.cookieSize > 0)
                 StartCoroutine(DestroyTray());
 
         }
@@ -75,15 +75,8 @@ public class Tray : MonoBehaviour
         }
         
         yield return StartCoroutine(door.CloseDoor());
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         _ovenParticle.SetActive(true);
-
-        // 나옴
-        if (trayWithCookie.transform.localPosition.z < _initialPosition.z)
-        {
-            Vector3 target = new Vector3(trayWithCookie.transform.localPosition.x, trayWithCookie.transform.localPosition.y, _initialPosition.z);
-            trayWithCookie.transform.localPosition = Vector3.MoveTowards(trayWithCookie.transform.localPosition, target, _moveSpeed * Time.deltaTime);
-        }
 
         isMove = true;
     }

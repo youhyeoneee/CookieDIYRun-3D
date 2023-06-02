@@ -9,11 +9,8 @@ public class Obstacle : Gimmick
 
     [Header("Obstacle Break Effect")]
     [SerializeField] private GameObject     _particle; 
-    [SerializeField] private GameObject     _canvas; 
-
+    [SerializeField] private float wallSize = 0;
     public float forceMagnitude = 500f; // 날아가는 힘의 세기
-
-    
 
     protected override void Rotate()
     {
@@ -24,34 +21,25 @@ public class Obstacle : Gimmick
     protected override void ActivateGimmick(GameObject hitObject)
     {
 
-        // if (hitObject.transform.localScale.x > 10f)
-        // {
-        //     Break();
-        // }
-        // else 
-        // {
+        Debug.Log(hitObject);
+        // 사이즈 감소
+        GameManager.Instance.ChangeSize(_amount);
+        Cookie cookie = hitObject.GetComponent<Cookie>();
+        StartCoroutine(cookie.ChangerCookieColor(cookie._redMat));
+        StartCoroutine(cookie.ChangeSize(_amount));
 
-            Debug.Log(hitObject);
-             // 재료 개수 감소
-            GameManager.Instance.ChangeTasty(_amount);
-            Cookie cookie = hitObject.GetComponent<Cookie>();
-            StartCoroutine(cookie.RedCookie());
-            StartCoroutine(cookie.ChangeSize(_amount));
-
-            // 충돌한 방향을 구하여 힘을 가해 장애물을 날려줌
-            if (_rb != null)
-            {
-                Vector3 collisionDirection = (hitObject.transform.position - transform.position).normalized;
-                _rb.AddForce(collisionDirection * forceMagnitude, ForceMode.Impulse);
-            }
-
-            if (_canvas != null)
-            {
-                _canvas.SetActive(false);
-            }
-
-        // }
-       
+        Debug.Log($"{GameManager.Instance.cookieSize} {wallSize}");
+        // 벽보다 크면
+        if (GameManager.Instance.cookieSize >= wallSize)
+        {
+            // 뚫고 감
+            if (_particle != null)
+                Break();
+        }
+        else
+        {
+            StartCoroutine(cookie.BreakCookie());
+        }
     }
 
     private void Break()

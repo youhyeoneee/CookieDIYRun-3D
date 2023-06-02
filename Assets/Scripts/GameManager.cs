@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
 
     public GameState gameState = GameState.NotStart;
-    public int tasty;
+    public int cookieSize;
 
     #region instance
 
@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
     
+    void Start()
+    {
+        cookieSize = 5;
+    }
     void Update()
     {
         switch(gameState)
@@ -52,15 +56,15 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void ChangeTasty(int changeCount)
+    public void ChangeSize(int amount)
     {
-        tasty += changeCount;
+        cookieSize += amount;
     }
     
     public void StartGame()
     {
-        // 재료 개수 초기화
-        tasty = 0;
+        // 사이즈 초기화
+        cookieSize = 5;
 
         // 게임 상태 변경 
         gameState = GameState.Run;

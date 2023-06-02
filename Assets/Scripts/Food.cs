@@ -18,7 +18,12 @@ public class Food : Gimmick
         _effectObj.SetActive(true);
         _mr.enabled = false;
         
-        GameManager.Instance.ChangeTasty(_amount);
-        StartCoroutine(hitObject.GetComponent<Cookie>().ChangeSize(_amount));
+
+        GameManager.Instance.ChangeSize(_amount);
+
+        Cookie cookie = hitObject.GetComponent<Cookie>();
+
+        StartCoroutine(cookie.ChangerCookieColor(cookie._greenMat));
+        StartCoroutine(cookie.ChangeSize(_amount));
     }
 }

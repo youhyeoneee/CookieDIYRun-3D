@@ -40,18 +40,26 @@ public class UIManager : MonoBehaviour
                 if (!gameUI.activeSelf)
                     gameUI.SetActive(true);
 
+
+
                 // 재료 개수 UI
-                tastyText.text = GameManager.Instance.tasty.ToString();
+                int size = GameManager.Instance.cookieSize;
+                if (size < 0) size = 0;
+                tastyText.text = size.ToString();
 
                 break;
+            case GameState.Fail:
+            case GameState.StartBaking:
+                 // 게임 UI 활성화
+                if (gameUI.activeSelf)
+                    gameUI.SetActive(false);
+                break;
         }
+
+
       
 
         
     }
 
-    // IEnumerator FadeOut()
-    // {
-    //     GetComponent
-    // }
 }

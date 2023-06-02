@@ -65,6 +65,7 @@ MonoBehaviour:
   _amount: -2
   _mr: {fileID: 3787422503952396281}
   _particle: {fileID: 0}
+  wallSize: 0
   forceMagnitude: 500
 --- !u!1 &3902231261425472765
 GameObject:

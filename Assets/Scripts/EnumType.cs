@@ -12,6 +12,8 @@ public enum AnimType
     run, 
     jump,
     attack,
+    jump2,
+    slide,
 }
 
 public enum GameState

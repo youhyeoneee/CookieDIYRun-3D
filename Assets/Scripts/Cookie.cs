@@ -7,10 +7,11 @@ using UnityEngine.AI;
 public class Cookie : MonoBehaviour
 {
     GameState gameState;
+    int cookieSize;
 
     [Header("Move")]
     [SerializeField] private float      moveXSpeed          = 50f;
-    [SerializeField] private float      moveZSpeed          = 18f;
+    [SerializeField] public float      moveZSpeed          = 18f;
     private float dragDirection;
 
     [Header("Rotation")]
@@ -20,6 +21,12 @@ public class Cookie : MonoBehaviour
     private float       rotationRange = 25f;
     private float       minRotation;
     private float       maxRotation;
+
+    [Header("Jump & Slide")]
+    [SerializeField] private float jumpForce = 500f;
+    public bool isJump = false;
+    public bool isSlide = false;
+    public Rigidbody rb;
 
     [Header("Animation")]
     public Animator anim;
@@ -31,8 +38,10 @@ public class Cookie : MonoBehaviour
 
     [Header("Material")]
     [SerializeField] private SkinnedMeshRenderer _cookieBody;
-    [SerializeField] private Material _redMat;
-    [SerializeField] private Material[] _mat;
+    public Material _redMat;
+    public Material _greenMat;
+
+    private Material[] _mat;
 
     [Header("Break")]
     [SerializeField] private GameObject _breakCookie;
@@ -53,31 +62,35 @@ public class Cookie : MonoBehaviour
         anim = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
         _mat = _cookieBody.materials;
+        rb = GetComponent<Rigidbody>();
     }
     private void Update()
     {
         gameState = GameManager.Instance.gameState;
+        cookieSize = GameManager.Instance.cookieSize;
 
-
-        if (transform.localScale.x < 0 && gameState != GameState.Fail)
+        if (cookieSize <= 0 && gameState != GameState.Fail)
         {
             // 피격 효과
             StartCoroutine(BreakCookie());
-            GameManager.Instance.Fail();
         }
         else 
         {
             switch (gameState)
             {
                 case GameState.Run:
-                    if (Input.GetMouseButton(0))
+                    if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                     {
                         anim.SetBool(AnimType.run.ToString(), true);
+                    }
 
-                        // 앞으로 이동
-                        float moveZ = moveZSpeed * Time.fixedDeltaTime;
-                        transform.Translate(Vector3.forward * moveZ);
+                    // 자동으로 앞으로 이동
 
+                    float moveZ = moveZSpeed * Time.fixedDeltaTime;
+                    transform.Translate(Vector3.forward * moveZ);
+
+                    if (Input.GetMouseButton(0))
+                    {
                         // 마우스 드래그 입력 받기
                         dragDirection = Input.GetAxis("Mouse X");
 
@@ -91,10 +104,21 @@ public class Cookie : MonoBehaviour
                         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSmoothness);
 
                     }
-                    if (Input.GetMouseButtonUp(0))
+                    else 
                     {
-                        anim.SetBool(AnimType.run.ToString(), false);
+                        // 점프 발판을 밟으면 점프
+                        if (isJump)
+                        {
+                            Jump();
+                        }
+                        // 슬라이드 발판을 밟으면 슬라이드
+                        else if (isSlide)
+                        {
+                            Slide();
+                        }
                     }
+
+                   
                     break;
                 case GameState.GoToOven:
                     if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Run"))
@@ -109,6 +133,9 @@ public class Cookie : MonoBehaviour
                         StartCoroutine(RotateCharacter());
                         GameManager.Instance.GameOver();
                     }
+                    break;
+                case GameState.Fail:
+                    _agent.isStopped = true;
                     break;
                     
             }
@@ -131,22 +158,27 @@ public class Cookie : MonoBehaviour
         }
     }
 
-    private IEnumerator BreakCookie()
+    public IEnumerator BreakCookie()
     {
+        if (_mr.enabled)
+        {
 
-        _mr.enabled = false;
-        yield return new WaitForSeconds(0.2f);
-        Instantiate(_breakCookie, transform.position + Vector3.up, Quaternion.identity);
+            _agent.isStopped = true;
+            _mr.enabled = false;
+            yield return new WaitForSeconds(0.2f);
+            Instantiate(_breakCookie, transform.position + Vector3.up, Quaternion.identity);
+
+            yield return new WaitForSeconds(2f);
+            GameManager.Instance.Fail();
+        }
     }
 
-    public IEnumerator RedCookie()
+    public IEnumerator ChangerCookieColor(Material newMat)
     {
 
         Material[] mats = _cookieBody.materials;
-        mats[2] = _redMat;
+        mats[2] = newMat;
         _cookieBody.materials = mats;
-
-        Debug.Log("RedCookie");
         yield return new WaitForSeconds(0.2f);
 
         _cookieBody.materials = _mat;
@@ -164,5 +196,24 @@ public class Cookie : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotaionSpeed * Time.deltaTime);
             yield return null;
         }
+    }
+
+     private void Jump()
+    {
+        // 점프 애니메이션 재생
+        anim.SetTrigger(AnimType.jump2.ToString());
+
+        // 점프
+        // Rigidbody rb = GetComponent<Rigidbody>();
+
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        // rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+        isJump = false;
+    }
+
+    private void Slide()
+    {
+        anim.SetTrigger(AnimType.slide.ToString());
+        isSlide = false;
     }
 }

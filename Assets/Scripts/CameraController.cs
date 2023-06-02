@@ -21,6 +21,7 @@ public class CameraController : MonoBehaviour
     private Vector3 offsetPos;
     private Quaternion offsetRot;
     GameState gameState;
+    GameState beforeGameState = GameState.NotStart;
     void Start()
     {
         offsetPos = transform.position - target.transform.position;
@@ -32,45 +33,32 @@ public class CameraController : MonoBehaviour
     {
         gameState = GameManager.Instance.gameState;
 
-        switch (currentIndex)
+        if (beforeGameState != gameState)
         {
-            case 0:
-                if (gameState == GameState.Run)
-                {
-                    StartCoroutine(MoveCamFollowPlayer(cameras[currentIndex]));
-                    currentIndex++;
-                }
-                break;
-            case 1:
-                if (gameState == GameState.GoToOven)
-                {
-                    StartCoroutine(MoveCamFollowPlayer(cameras[currentIndex]));
-                    currentIndex++;
-                }
-                else if (gameState == GameState.Fail)
-                {
-                    StartCoroutine(MoveCamEnding(cameras[currentIndex+1]));
-                    currentIndex++;
-                }
-                break;
-            case 2:
-                if (gameState == GameState.StartBaking )
-                {
-                    StartCoroutine(MoveCamEnding(cameras[currentIndex]));
-                    currentIndex++;
-                }
-                break;
-            // case 3:
-            //     if (gameState == GameState.Ended)
-            //     {
-            //         StartCoroutine(MoveCamEnding(cameras[currentIndex]));
-            //         currentIndex++;
-            //     }
-            //     break;
-            // case 4:
-            //     break;
+            beforeGameState = gameState;
+             switch (gameState)
+            {
+                case GameState.Run:
+                    StartCoroutine(MoveCamFollowPlayer(cameras[0]));
+                    break;
+                case GameState.GoToOven:
+                    StartCoroutine(MoveCamFollowPlayer(cameras[1]));
+                    break;
+                case GameState.Fail:
+                case GameState.StartBaking:              
+                    StartCoroutine(MoveCamEnding(cameras[2]));
+                    break;
+                // case 3:
+                //     if (gameState == GameState.Ended)
+                //     {
+                //         StartCoroutine(MoveCamEnding(cameras[currentIndex]));
+                //         currentIndex++;
+                //     }
+                //     break;
+                // case 4:
+                //     break;
+            }
         }
-
     }
     
     void LateUpdate()

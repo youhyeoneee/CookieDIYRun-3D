@@ -13,7 +13,6 @@ public abstract class Gimmick : MonoBehaviour
     protected Quaternion _startRotation;
     [SerializeField] protected int _amount;
     [SerializeField] protected MeshRenderer   _mr;
-    protected Rigidbody _rb;
 
 
 
@@ -21,11 +20,7 @@ public abstract class Gimmick : MonoBehaviour
     {
         _startRotation = transform.rotation;
         _mr = GetComponent<MeshRenderer>();
-        _rb = GetComponent<Rigidbody>();
-        if (_rb == null)
-        {
-            Debug.LogError($"Rigidbody 컴포넌트가 {gameObject.name} 장애물에 추가되어 있지 않습니다.");
-        }
+
     }
 
     protected virtual void Update()
@@ -42,9 +37,19 @@ public abstract class Gimmick : MonoBehaviour
         if (hitObject.CompareTag(TagType.Player.ToString()))
         {
             ActivateGimmick(hitObject);
-            // Key -> 아이템 획득
         }
     }
+
+    protected virtual void OnTriggerEnter(Collider other) 
+    {
+        GameObject hitObject = other.gameObject;
+        // 플레이어와 충돌했을 경우
+        if (hitObject.CompareTag(TagType.Player.ToString()))
+        {
+            ActivateGimmick(hitObject);
+        }
+    }
+
     protected abstract void ActivateGimmick(GameObject hitObject);
 
     ItemType StringToEnum(string alphabet)
